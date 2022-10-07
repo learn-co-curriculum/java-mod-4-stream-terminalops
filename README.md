@@ -14,7 +14,9 @@ A new stream must be created to traverse the same data source again.
 
 ## count
 
-The `count` method returns a `long` value representing the number of elements in the stream.
+`long	count()`
+
+The `count` method returns a `long` representing the number of elements in the stream.
 
 ```java
 import java.util.List;
@@ -34,12 +36,15 @@ public class Example {
 
 ## max and min
 
-The `max` method takes a `Comparator<T>` as a parameter and returns a `Optional<T>` representing
+`Optional<T>	max(Comparator<? super T> comparator)`  
+`Optional<T>	min(Comparator<? super T> comparator)`
+
+The `max` method takes a `Comparator` as a parameter and returns a `Optional<T>` representing
 the maximum element of the stream according to the provided Comparator.
 
 - `T` is the type of the elements in the stream's data source.
-- The `Comparator<T>` corresponds to the data source type `T`, i.e. `Integer::compare` for an `Integer` array or list.
-- The return type is `Optional<T>` since the operation could be called on an empty collection, in which case there is no max value.
+- The `Comparator` corresponds to the data source type `T`, i.e. `Integer::compare` for an `Integer` array or list.
+- The return type is `Optional` since the operation could be called on an empty collection, in which case there is no max value.
 
 In the example below,  the `max` function returns the 
 maximum value `55` wrapped in an `Optional` object
@@ -80,10 +85,12 @@ Optional.empty
 max price unavailable
 ```
 
-The `min` method is similar in that it takes a `Comparator<T>` as
-parameter and returns `Optional<T>`, the minimum element in the stream.
+The `min` method is similar in that it takes a `Comparator` as
+parameter and returns an `Optional`, the minimum element in the stream.
 
 ## forEach
+
+`void forEach(Consumer<? super T> action)`
 
 The `forEach` method takes a `Consumer` as a parameter
 and performs the consumer function on each element in the stream.
@@ -124,6 +131,10 @@ Pass method reference as consumer
 ```
 
 ## allMatch, anyMatch, noneMatch
+
+`boolean	allMatch(Predicate<? super T> predicate)`  
+`boolean	anyMatch(Predicate<? super T> predicate)`  
+`boolean	noneMatch(Predicate<? super T> predicate)`
 
 - The `allMatch` method takes a `Predicate` parameter and returns a `boolean` 
   indicating whether all elements match the predicate.
@@ -183,6 +194,9 @@ public class ExampleIntPredicateMatch {
 ```
 
 ## toArray
+
+`Object[]	toArray()`  
+`<A> A[]	toArray(IntFunction<A[]> generator)`
 
 The `toArray` method returns an array of elements in the stream.
 
