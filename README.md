@@ -2,7 +2,12 @@
 
 ## Learning Goals
 
-- Use methods that perform a terminal operation on a `Stream` object.
+- Use methods that perform a terminal operation on a `Stream` object:
+  - count
+  - max, min
+  - forEach
+  - allMatch, anyMatch, noneMatch
+  - toArray
 
 ## Introduction
 
@@ -87,6 +92,41 @@ max price unavailable
 
 The `min` method is similar in that it takes a `Comparator` as
 parameter and returns an `Optional`, the minimum element in the stream.
+
+
+### Primitive stream max and min methods
+
+The `min` and `max` methods for
+primitive streams `IntStream`, `DoubleStream`, and `LongStream`:
+
+- Do not require a `Comparator` parameter.
+- Return an optional value of type `OptionalInt`, `OptionalDouble`, and `OptionalLong` respectively.
+
+In the example below, an `IntStream` is created
+since the array contains primitive values of type `int`.
+The `IntStream` methods `max` and `min` do not require a comparator.
+
+```Java
+import java.util.Arrays;
+import java.util.OptionalInt;
+import java.util.stream.IntStream;
+
+public class ExampleMaxMinPrimitive {
+  public static void main(String[] args) {
+    int[] ages = {12, 55, 37, 9};
+    IntStream agesStream = Arrays.stream(ages);
+    OptionalInt maxNumber = agesStream.max();
+    System.out.println(maxNumber);   //Optional[55]
+    maxNumber.ifPresent(System.out::println); //9
+
+    //int[] -> IntStream -> max pipeline in one statement
+    OptionalInt minNumber = Arrays.stream(ages).min();
+    System.out.println(minNumber);   //Optional[9]
+    minNumber.ifPresent(System.out::println);  //9
+  }
+}
+```
+
 
 ## forEach
 
