@@ -2,10 +2,7 @@
 
 ## Learning Goals
 
-- Use terminal operations that return an int: count, max, min, 
-- Use terminal operations that return a boolean: allMatch, anyMatch, noneMatch
-- Use terminal operations that work with a consumer: forEach
-- Use terminal operations that return an array: toArray
+- Use methods that perform a terminal operation on a `Stream` object.
 
 ## Introduction
 
@@ -17,7 +14,7 @@ A new stream must be created to traverse the same data source again.
 
 ## count
 
-The terminal operation `count` returns a `long` value representing the number of elements in the stream.
+The `count` method returns a `long` value representing the number of elements in the stream.
 
 ```java
 import java.util.List;
@@ -29,21 +26,26 @@ public class Example {
         long numCount = numbers.stream().count();
         System.out.println(numCount); //5
 
-        Stream<String> stream2 = Stream.of("hello", "goodbye");
-        System.out.println(stream2.count()); //2
-
+        Stream<String> greetStream = Stream.of("hello", "hi there");
+        System.out.println(greetStream.count()); //2
     }
 }
 ```
 
 ## max and min
 
-The terminal operation `max` takes a `Comparator` as a parameter and returns a `Optional<T>` representing
+The `max` method takes a `Comparator<T>` as a parameter and returns a `Optional<T>` representing
 the maximum element of the stream according to the provided Comparator.
 
 - `T` is the type of the elements in the stream's data source.
-- The `Comparator` corresponds to the data source type `T`, i.e. `Integer::compare` for an `Integer` array or list.
+- The `Comparator<T>` corresponds to the data source type `T`, i.e. `Integer::compare` for an `Integer` array or list.
 - The return type is `Optional<T>` since the operation could be called on an empty collection, in which case there is no max value.
+
+In the example below,  the `max` function returns the 
+maximum value `55` wrapped in an `Optional` object
+when called on a non-empty list `ages`.
+The `max` function returns `Optional.empty` when
+called on the empty list `prices`.
 
 ```java
 import java.util.ArrayList;
@@ -51,26 +53,39 @@ import java.util.List;
 import java.util.Optional;
 
 public class Example {
-    public static void main(String[] args) {
-        List<Integer> ages = List.of(12, 55, 37, 9);
-        Optional<Integer> maxNumber = ages.stream().max(Integer::compare);
-        System.out.println(maxNumber);   //Optional[55]
+  public static void main(String[] args) {
+    List<Integer> ages = List.of(12, 55, 37, 9);
+    //List is not empty, a maximum value is returned as Optional[55]
+    Optional<Integer> maxNumber = ages.stream().max(Integer::compare);
+    System.out.println(maxNumber);   //Optional[55]
+    maxNumber.ifPresentOrElse(System.out::println,
+            () -> System.out.println("max age unavailable"));
 
-        //Try with an empty list, there is no max value!
-        List<Double> prices = new ArrayList<Double>();
-        Optional<Double> maxPrice = prices.stream().max(Double::compare);
-        System.out.println(maxPrice);    //Optional.empty
-    }
+    List<Double> prices = new ArrayList<Double>();
+    //List is empty, max method returns Optional.empty
+    Optional<Double> maxPrice = prices.stream().max(Double::compare);
+    System.out.println(maxPrice);    //Optional.empty
+    maxPrice.ifPresentOrElse(System.out::println,
+            () -> System.out.println("max price unavailable"));
+  }
 }
 ```
 
-The `min` operation is similar in that it takes
-a `Comparator` as parameter and returns `Optional<T>`, the minimum element
-in the stream based on the `Comparator`.
+The program prints:
+
+```text
+Optional[55]
+55
+Optional.empty
+max price unavailable
+```
+
+The `min` method is similar in that it takes a `Comparator<T>` as
+parameter and returns `Optional<T>`, the minimum element in the stream.
 
 ## forEach
 
-The `forEach` operation takes a `Consumer` as a parameter
+The `forEach` method takes a `Consumer` as a parameter
 and performs the consumer function on each element in the stream.
 
 In the example below, a lambda expression is passed as the consumer
@@ -110,11 +125,11 @@ Pass method reference as consumer
 
 ## allMatch, anyMatch, noneMatch
 
-- The `allMatch` operation takes a `Predicate` parameter and returns a `boolean` 
+- The `allMatch` method takes a `Predicate` parameter and returns a `boolean` 
   indicating whether all elements match the predicate.
-- The `anyMatch` operation takes a `Predicate` parameter and returns a `boolean`
+- The `anyMatch` method takes a `Predicate` parameter and returns a `boolean`
   indicating whether at least one element matches the predicate.
-- The `noneMatch` operation takes a `Predicate` parameter and returns a `boolean`
+- The `noneMatch` method takes a `Predicate` parameter and returns a `boolean`
   indicating whether no elements match the predicate.
 
 ```java
@@ -149,8 +164,8 @@ None over 60? true
 Recall that we create primitive streams `IntStream`, `DoubleStream`, and `LongStream`
 when the elements are primitive values (int, double, long).  
 
-Stream matching operations require a primitive predicate `IntPredicate`, `DoublePredicate`, and `LongPredicate`
-when the stream elements are primitive values.
+A primitive predicate `IntPredicate`, `DoublePredicate`, and `LongPredicate`
+is required to match primitive stream elements.
 
 ```java
 import java.util.Arrays;
@@ -169,14 +184,14 @@ public class ExampleIntPredicateMatch {
 
 ## toArray
 
-The `toArray` operation returns an array of elements in the stream.
+The `toArray` method returns an array of elements in the stream.
 
 ### Calling toArray on primitive streams
 
-Calling `toArray` on a primitive stream produces an array of the underlying primitive data type.
+Calling method `toArray` on a primitive stream produces an array of the underlying primitive data type.
 
 In the example below, the stream has type `IntStream` as the underlying data source is an array of `int`.
-The `toArray` operation produces a new array of `int`.
+The `toArray` method produces a new array of `int`.
 
 ```java
 import java.util.Arrays;
@@ -206,10 +221,10 @@ public class ExampleToIntArray {
 
 ### Calling toArray on object streams
 
-Calling `toArray()` on a stream with elements of a class type will create an array `Object[]`.
+Calling method `toArray` on a stream with elements of a class type will create an array `Object[]`.
 
-In the example below, the stream's data source is a list of `Integer`, thus the `toArray`
-returns a value of type `Object[]`.
+In the example below, the stream's data source is a list of `Integer`.
+The `toArray` method returns a value of type `Object[]`.
 
 ```java
 import java.util.Arrays;
@@ -231,7 +246,9 @@ public class ExampleToObjectArray {
 }
 ```
 
-To return an array `Integer[]` rather than `Object[]`, we must pass a generator function `Integer[]::new`:
+To return an array of `Integer` rather than `Object`,
+we must pass a generator function `Integer[]::new` as
+a parameter to the `toArray` method:
 
 ```java
 import java.util.Arrays;
@@ -247,8 +264,8 @@ public class Example {
         Stream<Integer> stream = list.stream();
 
         //pass a type generator function into toArray
-        Integer[] intArray = stream.toArray(Integer[]::new);
-        System.out.println(Arrays.toString(intArray));
+        Integer[] integerArray = stream.toArray(Integer[]::new);
+        System.out.println(Arrays.toString(integerArray));
 
     }
 }
@@ -256,7 +273,8 @@ public class Example {
 
 ### IllegalStateException
 
-Once a terminal operation completes, an `IllegalStateException` is thrown if additional operations are called on the stream.
+Once a terminal method completes, an `IllegalStateException` is thrown
+if additional intermediate or terminal methods are called on the stream.
 For example, the following code attempts to call `forEach` after calling `count` on the stream:
 
 ```java
@@ -283,7 +301,7 @@ Running the program produces as output:
 Exception in thread "main" java.lang.IllegalStateException: stream has already been operated upon or closed   
 ```
 
-A new stream must be created if further processing of the data source is required:
+A new stream must be created if further processing of the data source is required after calling a terminal method:
 
 ```java
 import java.util.Arrays;
@@ -303,6 +321,10 @@ public class ExampleNoException {
     }
 }
 ```
+
+## reduce and collect
+
+The `reduce` and `collect` terminal operations are explained in separate lessons.
 
 ## Resources
 
