@@ -64,7 +64,9 @@ import java.util.Optional;
 
 public class Example {
   public static void main(String[] args) {
+      
     List<Integer> ages = List.of(12, 55, 37, 9);
+    
     //List is not empty, a maximum value is returned as Optional[55]
     Optional<Integer> maxNumber = ages.stream().max(Integer::compare);
     System.out.println(maxNumber);   //Optional[55]
@@ -72,11 +74,13 @@ public class Example {
             () -> System.out.println("max age unavailable"));
 
     List<Double> prices = new ArrayList<Double>();
+    
     //List is empty, max method returns Optional.empty
     Optional<Double> maxPrice = prices.stream().max(Double::compare);
     System.out.println(maxPrice);    //Optional.empty
     maxPrice.ifPresentOrElse(System.out::println,
             () -> System.out.println("max price unavailable"));
+    
   }
 }
 ```
@@ -92,6 +96,66 @@ max price unavailable
 
 The `min` method is similar in that it takes a `Comparator` as
 parameter and returns an `Optional`, the minimum element in the stream.
+
+###  Using `Comparator.comparing` methods with the `min` and `max` operations
+
+Consider the `Employee` class:
+
+```java
+public class Employee {
+  private String ssn;
+  private double salary;
+  private int age;
+
+  public Employee(String ssn, double salary, int age) {
+    this.ssn = ssn;
+    this.salary = salary;
+    this.age = age;
+  }
+
+  public String getSsn() { return ssn; }
+  public double getSalary() { return salary; }
+  public int getAge() { return age; }
+}
+```
+
+Recall the `Comparator` methods accept an instance method reference as a sort key function, for example:
+
+- `Comparator.comparingDouble(Employee::getSalary)`
+- `Comparator.comparingInt(Employee::getAge)`
+
+We can pass the salary comparator to `max` to find the employee with the highest salary,
+and the age comparator to `min` to find the youngest employee:
+
+```java
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+
+public class Example {
+    public static void main(String[] args) {
+        List<Employee> employees = Arrays.asList(
+                new Employee("123456789", 58000.0, 32),
+                new Employee("999999999", 45000.0, 24));
+
+        Optional<Employee> highestPaid = employees.stream().max(Comparator.comparingDouble(Employee::getSalary));
+        highestPaid.ifPresent((employee -> System.out.println("Highest salary: " + highestPaid.get().getSalary())));
+
+        Optional<Employee> youngest = employees.stream().min(Comparator.comparingInt(Employee::getAge));
+        youngest.ifPresent((employee -> System.out.println("Youngest age: " + youngest.get().getAge())));
+
+    }
+
+}
+```
+
+The program prints:
+
+```text
+Highest salary: 58000.0
+Youngest age: 24
+```
 
 
 ### Primitive stream max and min methods
@@ -111,7 +175,7 @@ import java.util.Arrays;
 import java.util.OptionalInt;
 import java.util.stream.IntStream;
 
-public class ExampleMaxMinPrimitive {
+public class Example {
   public static void main(String[] args) {
     int[] ages = {12, 55, 37, 9};
     IntStream agesStream = Arrays.stream(ages);
@@ -210,7 +274,7 @@ Any odd? true
 None over 60? true
 ```
 
-### matching with primitive data types
+### Matching with primitive data types
 
 Recall that we create primitive streams `IntStream`, `DoubleStream`, and `LongStream`
 when the elements are primitive values (int, double, long).  
@@ -223,12 +287,12 @@ import java.util.Arrays;
 import java.util.function.IntPredicate;
 import java.util.stream.IntStream;
 
-public class ExampleIntPredicateMatch {
+public class Example {
     public static void main(String[] args) {
         int[] grades = {90, 75, 100, 58};
         IntPredicate isPassing = i -> i >= 60;
         IntStream gradesStream = Arrays.stream(grades);
-        System.out.println("All at least 18? " + gradesStream.allMatch(isPassing));  //false
+        System.out.println("All passing? " + gradesStream.allMatch(isPassing));  //false
     }
 }
 ```
@@ -251,7 +315,7 @@ The `toArray` method produces a new array of `int`.
 import java.util.Arrays;
 import java.util.stream.IntStream;
 
-public class ExampleToIntArray {
+public class Example {
     public static void main(String[] args) {
 
         //int[] --> IntStream --> int[]
@@ -285,7 +349,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
-public class ExampleToObjectArray {
+public class Example {
     public static void main(String[] args) {
 
         //List<Integer> --> Stream<Integer> --> Object[]
@@ -361,7 +425,7 @@ A new stream must be created if further processing of the data source is require
 import java.util.Arrays;
 import java.util.stream.Stream;
 
-public class ExampleNoException {
+public class Example {
     public static void main(String[] args) {
         String[] greetings = {"hi", "hello", "howdy"};
         Stream<String> greetStream = Arrays.stream(greetings);
@@ -376,10 +440,7 @@ public class ExampleNoException {
 }
 ```
 
-## reduce and collect
-
-The `reduce` and `collect` terminal operations are explained in separate lessons.
-
 ## Resources
 
+- [Java 11 Comparator](https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/Comparator.html)  
 - [Java 11 Stream](https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/stream/Stream.html)
